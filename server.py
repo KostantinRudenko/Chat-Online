@@ -3,15 +3,21 @@ from config import *
 
 class Server:
     
-    def chat():
+    def socket_server(self):
         client_count = 0
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.bind((HOST, PORT))
         server_socket.listen(CLIENT_COUNT)
-
+        print("Server is ready!")
+        
         while True:
-            client = server_socket.accept()
-            client_count += 1
-            client.send(f'{client} connected'.encode())
             if client_count > CLIENT_COUNT:
-                return STATUS_CODE[400]
+                server_socket.send(STATUS_CODE[400])
+            else:
+                client, addr = server_socket.accept()
+                client_count += 1
+                print(f'{addr} is connected')
+
+if __name__ == "__main__":
+    server = Server()
+    server.socket_server()

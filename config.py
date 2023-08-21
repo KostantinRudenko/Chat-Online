@@ -1,6 +1,6 @@
 # Status Codes
 
-STATUS_CODE = {400 : '400 Error'}
+STATUS_CODE = {400 : '400 Error. Server is full.'}
 
 #Server Datas
 
