@@ -1,6 +1,5 @@
 import socket
 from config import *
-from server import *
 
 
 class Client:
@@ -10,6 +9,8 @@ class Client:
         client_socket.connect((HOST, PORT))
         print('You are connected')
         while True:
+            massage = input("Massage: ")
+            client_socket.send(massage.encode())
             data = client_socket.recv(1024).decode()
             print(data)
 
