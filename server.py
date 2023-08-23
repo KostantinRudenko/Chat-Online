@@ -1,8 +1,8 @@
 import socket
 from config import *
 
-class Server:
-    def __init__(self) -> None:
+class Server: # Main class
+    def __init__(self) -> None: # This function run the server and save total info
         self.connected_clients = []
         self.connected_clients_addr=[]
         self.client_count = 0
@@ -11,9 +11,8 @@ class Server:
         self.server_socket.bind((HOST, PORT))
         self.server_socket.listen(CLIENT_COUNT)
         print("Server is ready!")
-        self.server_socket.send
 
-    def socket_server(self):
+    def socket_server(self): # This function makes server works
         
         while True:
             client_data = self.client_connect()
@@ -26,11 +25,11 @@ class Server:
                 self.server_socket.send(STATUS_CODE[400])
                 break
         
-    def broadcast_message(self, client_socket, massage):
+    def broadcast_message(self, client_socket, message): # This method sends massages to every connected client
         for client_addr in self.connected_clients_addr:
-            client_socket.sendto(massage, tuple(client_addr))
+            client_socket.sendto(message, tuple(client_addr))
     
-    def client_connect(self):
+    def client_connect(self): # This method accepts clients which wants to connect
         client_socket, addr = self.server_socket.accept()
         self.client_count += 1
         self.connected_clients.append(client_socket)
