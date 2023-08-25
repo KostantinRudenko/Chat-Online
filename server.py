@@ -1,6 +1,7 @@
 import socket
 import select
 import threading
+from functools import partial
 from config import *
 
 class Server: # Main class
@@ -21,7 +22,7 @@ class Server: # Main class
             self.client_data_saving(client_socket, addr)
             self.broadcast_message(client_socket)
             
-            client_thread = threading.Thread(target=self.broadcast_message, args=(self.broadcast_message, client_socket, addr))
+            client_thread = threading.Thread(target=partial(self.broadcast_message, client_socket))
             client_thread.start()
             
             if self.client_count > CLIENT_COUNT:
