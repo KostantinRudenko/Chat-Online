@@ -1,4 +1,5 @@
 import socket
+import select
 from config import *
 
 
@@ -10,16 +11,17 @@ class Client:
         print('You are connected')
 
 
-    def socket_client(self):
+    def socket_client(self): # This function sends and recieve messages
         while True:
-            massage = input("Massage: ")
-            self.server_socket.send(massage.encode())
-            data = self.server_socket.recv(1024).decode()
-            if not data:
-                continue
-            
-            elif data:
+            self.server_socket.setblocking(0)
+
+            ready = select.select([self.server_socket], [], [], 2)
+            if ready[0]:
+                data = self.server_socket.recv(1024).decode()
                 print(data)
+            else:
+                massage = input("Massage: ")
+                self.server_socket.send(massage.encode())
 
 if __name__ == "__main__":
     client = Client()
