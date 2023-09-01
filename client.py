@@ -17,11 +17,17 @@ class Client:
 
             ready = select.select([self.server_socket], [], [], 2)
             if ready[0]:
-                data = self.server_socket.recv(1024).decode()
-                print(data)
+                result = self.receive_message()
             else:
                 massage = input("Massage: ")
                 self.server_socket.send(massage.encode())
+    
+    def recieve_message(self):
+        data = self.server_socket.recv(1024).decode()
+        return data
+    
+    def send_massage(self, massage):
+        self.server_socket.send(massage.encode())
 
 if __name__ == "__main__":
     client = Client()
