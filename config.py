@@ -12,6 +12,12 @@ PORT = 8080
 CLIENT_COUNT = 3
 
 #UI options
+CHAT_WIDTH = 600
+CHAT_HEIGHT = 500
+
+CHAT_TEXT_HEIGHT = 20
+CHAT_TEXT_WIDTH = 70
+
 MAIN_WIDTH = 180
 MAIN_HEIGHT = 180
 
@@ -40,3 +46,14 @@ NOT_RESIZABLE_WIDTH = False
 NOT_RESIZABLE_HEIGHT = False
 
 ANCHOR_NORTH = 'n'
+
+# Random names part
+RANDOM_START_NAME = ['Random', 'Sussy', 'Bad', 'Ugly', 'Glory', 'Dumb', 'Dull']
+RANDOM_END_NAME = ['Boy', 'Girl', 'Wizard', 'Hole', 'Warlock', 'Guy', 'NotSoGuy']
+
+# Random number gen part
+START_NUM = 1
+END_NUM = 100000
+
+# Regular expression patterns
+IP_PATTERN = r''

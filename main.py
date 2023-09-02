@@ -1,11 +1,26 @@
-from tkinter import *
+import tkinter.messagebox as mb
 
+from tkinter import *
 from config import *
-from client import Client
-from server import Server
 from engine import Engine
+from chat_window import chat_window
 
 def host_window():
+    def check():
+        eng = Engine()
+        ip = ip_field.get(0.0, END).strip()
+        port = port_field.get(0.0, END).strip()
+        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port)]
+        check_count = 0
+        for check in check_list:
+            if not check:
+                mb.showerror(title='Error!',
+                             message='Error. Something is wrong! Please, check your IP or port!')
+                break
+            check_count += 1
+        if check_count == len(check_list):
+            chat_window()
+
     alt_window = Toplevel()
     alt_window.geometry(f'{HOST_WIDTH}x{HOST_HEIGHT}')
 
@@ -30,7 +45,8 @@ def host_window():
     host_button = Button(alt_window,
                          width=BUTTON_WIDTH,
                          height=BUTTON_HEIGHT,
-                         text='Create Host!')
+                         text='Create Host!',
+                         command=check)
     
     widgets = [ip_label, ip_field, port_label, port_field, host_button]
 
@@ -39,6 +55,22 @@ def host_window():
 
 
 def connect_window():
+    def check():
+        eng = Engine()
+        ip = ip_field.get(0.0, END).strip()
+        end_ip = ip.find(':')
+        ip_part = ip[0:end_ip]
+        port = ip[end_ip + 1:]
+        check_list = [eng.is_empty(ip_part), eng.is_ip(ip_part), eng.is_port(port)]
+        check_count = 0
+        for check in check_list:
+            if not check:
+                mb.showerror(title='Error!',
+                             message='Error. Something is wrong! Please, check your IP or port!')
+                break
+            check_count += 1
+        if check_count == len(check_list):
+            chat_window()
     alt_window = Toplevel()
     alt_window.geometry(f'{CONN_WIDTH}x{CONN_HEIGHT}')
 
@@ -54,7 +86,8 @@ def connect_window():
     conn_button = Button(alt_window,
                          width=BUTTON_WIDTH,
                          height=BUTTON_HEIGHT,
-                         text='Connect!')
+                         text='Connect!',
+                         command=check)
     
     widgets = [ip_label, ip_field, conn_button]
 
