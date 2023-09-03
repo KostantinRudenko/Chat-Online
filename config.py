@@ -22,7 +22,7 @@ CHAT_TEXT_HEIGHT = 20
 CHAT_TEXT_WIDTH = 70
 
 MAIN_WIDTH = 180
-MAIN_HEIGHT = 180
+MAIN_HEIGHT = 215
 
 HOST_WIDTH = 250
 HOST_HEIGHT = 150
@@ -61,5 +61,10 @@ END_NUM = 100000
 # Regular expression patterns
 IP_PATTERN = r''
 
-# Check, we are host or client
-IS_HOST = False
+# Browser values
+BROWSERS = ['chrome', 'firefox', 'opera', 'safari']
+HELP_LINK = 'https://github.com/Sralker731/Chat-Online/wiki'
+
+# CMD Config
+EDGE_PROMPT = f'cmd /c python "start msedge {HELP_LINK}"'
+WEBBROWSER_PROMPT = f'cmd /c "python -m webbrowser -t "{HELP_LINK}""'

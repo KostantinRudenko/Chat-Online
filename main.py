@@ -1,4 +1,5 @@
 import tkinter.messagebox as mb
+import os
 
 from tkinter import *
 from config import *
@@ -9,9 +10,17 @@ from client import Client
 def chat_window():
     def send_message():
         nonlocal username
+        eng = Engine()
         message = message_field.get(0.0, END)
-        message_field.delete(0.0, END)
-        chat_field.insert(0.0, f'{eng.current_time()} {username} {message}')
+        message_field.clear(0.0, END)
+        
+        client.send_message(f'{eng.current_time()} {username} {message}')
+        recv_message = client.recieve_message()
+        chat_field.insert(0.0, recv_message + '\n')
+        eng.write_log(message)
+        
+
+
     eng = Engine()
     username = eng.generate_random_name()
     mb.showinfo(title='Your name!',
@@ -56,8 +65,11 @@ def chat_window():
         widget.grid(row=row_pos,
                     column=col)
     
-    if IS_HOST:
-        host_server = Server()
+    
+    client = Client()
+    client.socket_client()
+    chat_field.insert(0.0, f'[LOG] User {username} was connected to the server.\n')
+
     
 
 def host_window():
@@ -73,6 +85,8 @@ def host_window():
                              message='Error. Something is wrong! Please, check your IP or port!')
                 break
             check_count += 1
+        host_server = Server(ip, port)
+        host_server.socket_server()
         if check_count == len(check_list):
             chat_window()
 
@@ -123,6 +137,7 @@ def connect_window():
                 break
             check_count += 1
         if check_count == len(check_list):
+            client = Client(ip, port)
             chat_window()
     alt_window = Toplevel()
     alt_window.geometry(f'{CONN_WIDTH}x{CONN_HEIGHT}')
@@ -157,6 +172,12 @@ def connect_window():
     for widget in widgets:
         widget.pack(anchor=ANCHOR_NORTH)
 
+def open_help_link():
+    try:
+        os.system(WEBBROWSER_PROMPT)
+    except:
+        os.system(EDGE_PROMPT)
+
 window = Tk()
 window.geometry(f'{MAIN_WIDTH}x{MAIN_HEIGHT}')
 window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
@@ -182,7 +203,15 @@ connect_button = Button(width=BUTTON_WIDTH,
                         text = 'Connect to Chat!',
                         command=connect_window)
 
-widgets = [option_label, empty_label1, create_button, empty_label2, connect_button]
+empty_label3 = Label(width=LABEL_WIDTH,
+                     height=LABEL_HEIGHT)
+
+help_button = Button(width=BUTTON_WIDTH,
+                     height=BUTTON_HEIGHT,
+                     text='Help',
+                     command=open_help_link)
+
+widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3, help_button]
 
 for widget in widgets:
     widget.pack(anchor=ANCHOR_NORTH)

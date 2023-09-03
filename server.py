@@ -5,13 +5,13 @@ from functools import partial
 from config import *
 
 class Server: # Main class
-    def __init__(self) -> None: # This function run the server and save total info
+    def __init__(self, host, port) -> None: # This function run the server and save total info
         self.connected_clients = []
         self.connected_clients_addr=[]
         self.client_count = 0
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((HOST, PORT))
+        self.server_socket.bind((host, port))
         self.server_socket.listen(CLIENT_COUNT)
 
         print("Server is ready!")
