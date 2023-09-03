@@ -1,4 +1,5 @@
 import tkinter.messagebox as mb
+import os
 
 from tkinter import *
 from config import *
@@ -102,6 +103,12 @@ def connect_window():
     for widget in widgets:
         widget.pack(anchor=ANCHOR_NORTH)
 
+def open_help_link():
+    try:
+        os.system(WEBBROWSER_PROMPT)
+    except:
+        os.system(EDGE_PROMPT)
+
 window = Tk()
 window.geometry(f'{MAIN_WIDTH}x{MAIN_HEIGHT}')
 window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
@@ -127,7 +134,15 @@ connect_button = Button(width=BUTTON_WIDTH,
                         text = 'Connect to Chat!',
                         command=connect_window)
 
-widgets = [option_label, empty_label1, create_button, empty_label2, connect_button]
+empty_label3 = Label(width=LABEL_WIDTH,
+                     height=LABEL_HEIGHT)
+
+help_button = Button(width=BUTTON_WIDTH,
+                     height=BUTTON_HEIGHT,
+                     text='Help',
+                     command=open_help_link)
+
+widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3, help_button]
 
 for widget in widgets:
     widget.pack(anchor=ANCHOR_NORTH)
