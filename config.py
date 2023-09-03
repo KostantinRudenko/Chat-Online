@@ -60,3 +60,6 @@ END_NUM = 100000
 
 # Regular expression patterns
 IP_PATTERN = r''
+
+# Check, we are host or client
+IS_HOST = False
