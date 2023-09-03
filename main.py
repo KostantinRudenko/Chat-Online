@@ -58,10 +58,8 @@ def connect_window():
     def check():
         eng = Engine()
         ip = ip_field.get(0.0, END).strip()
-        end_ip = ip.find(':')
-        ip_part = ip[0:end_ip]
-        port = ip[end_ip + 1:]
-        check_list = [eng.is_empty(ip_part), eng.is_ip(ip_part), eng.is_port(port)]
+        port = port_field.get(0.0, END).strip()
+        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port)]
         check_count = 0
         for check in check_list:
             if not check:
@@ -77,11 +75,20 @@ def connect_window():
     ip_label = Label(alt_window,
                     width=LABEL_WIDTH,
                     height=LABEL_HEIGHT,
-                    text = 'Enter IP with port below:')
+                    text = 'Enter IP below:')
     
     ip_field = Text(alt_window,
                     width=FIELD_WIDTH,
                     height=FIELD_HEIGHT)
+    
+    port_label = Label(alt_window,
+                       width=LABEL_WIDTH,
+                       height=LABEL_HEIGHT,
+                       text = 'Enter port below:')
+    
+    port_field = Text(alt_window,
+                      width=FIELD_WIDTH,
+                      height=FIELD_HEIGHT)
     
     conn_button = Button(alt_window,
                          width=BUTTON_WIDTH,
@@ -89,7 +96,8 @@ def connect_window():
                          text='Connect!',
                          command=check)
     
-    widgets = [ip_label, ip_field, conn_button]
+    widgets = [ip_label, ip_field,
+               port_label, port_field, conn_button]
 
     for widget in widgets:
         widget.pack(anchor=ANCHOR_NORTH)
