@@ -6,6 +6,19 @@ The project was tested with **Radmin VPN**.
 ## Software(Programming & Modules)
 * Socket
 * Tkinter
+* Select
+* Threading
+* Re
+* Random
+* PyInstaller
 ## Operating system
 * Windows 10
 * Windows 10 (corporate system)
+# Other
+User can get help by typing "@Kostantin_Rudenko" in the contact search field in Telegram.
+
+Kostantin Rudenko support project and contribute to the project.
+# Made by...
+Database part of the project is made by Kostantin Rudenko.
+
+User Interface part of the project is made by Andrew Khukhrianskyi.
