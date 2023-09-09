@@ -1,6 +1,7 @@
 import socket
 import select
 import threading
+
 from config import *
 from exceptions import *
 
@@ -31,7 +32,12 @@ class Server: # Main class
                         data = client_socket.recv(1024)
                         if not data:
                             pass
-                        client_socket.send(data)
+                        else:
+                            for client in self.connected_clients:
+                                if client == client_socket:
+                                    client.send(b'200 : OK')
+                                else:
+                                    client_socket.send(data)
             except socket.error as e:
                 if e.errno == 10035:
                     pass
@@ -54,9 +60,8 @@ class Server: # Main class
 
 if __name__ == "__main__":
     server = Server(HOST, PORT)
-    
     accept_thread = threading.Thread(target=server.client_accepting, daemon=False)
     broadcast_thread = threading.Thread(name='Sanya', target=server.broadcast_message, daemon=False)
-    
+        
     accept_thread.start()
     broadcast_thread.start()
