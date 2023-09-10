@@ -1,5 +1,5 @@
 import socket
-import select
+import threading
 from config import *
 
 
@@ -7,27 +7,23 @@ class Client:
 
     def __init__(self, ip, port) -> None:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.connect(ip, port)
-        print('You are connected')
+        self.server_socket.connect((HOST, PORT))
 
-
-    def socket_client(self, client_message): # This function sends and recieve messages
+    def receive_message(self):
         while True:
-            self.server_socket.setblocking(0)
-
-            ready = select.select([self.server_socket], [], [], 2)
-            if ready[0]:
-                result = self.receive_message()
-            else:
-                self.server_socket.send(client_message.encode())
+            data = self.server_socket.recv(1024).decode()
+            print(data)
     
-    def recieve_message(self):
-        data = self.server_socket.recv(1024).decode()
-        return data
-    
-    def send_message(self, client_message):
-        self.server_socket.send(client_message.encode())
+    def send_message(self):
+        while True:
+            message = input('Message: ')
+            self.server_socket.send(message.encode())
 
 if __name__ == "__main__":
     client = Client()
-    client.socket_client()
+
+    send_thread = threading.Thread(target=client.send_message, daemon=False)
+    receive_thread = threading.Thread(target=client.receive_message, daemon=False)
+    
+    send_thread.start()
+    receive_thread.start()

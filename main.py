@@ -211,7 +211,8 @@ help_button = Button(width=BUTTON_WIDTH,
                      text='Help',
                      command=open_help_link)
 
-widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3, help_button]
+widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3,
+           help_button]
 
 for widget in widgets:
     widget.pack(anchor=ANCHOR_NORTH)
