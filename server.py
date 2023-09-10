@@ -17,8 +17,6 @@ class Server: # Main class
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((host, port))
         self.server_socket.listen(CLIENT_COUNT)
-
-        print("Server is ready!")
         
     def broadcast_message(self):
         '''
@@ -55,8 +53,6 @@ class Server: # Main class
             
             self.connected_clients.append(client_socket)
             self.connected_clients_addr.append(addr)
-            
-            print(f'{addr} is connected')
 
 if __name__ == "__main__":
     server = Server(HOST, PORT)

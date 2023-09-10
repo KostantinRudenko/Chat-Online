@@ -5,18 +5,23 @@ from config import *
 
 class Client:
 
-    def __init__(self, ip, port) -> None:
+    def __init__(self) -> None:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((HOST, PORT))
 
     def receive_message(self):
+        '''
+        Receives messages from server and return them.
+        '''
         while True:
             data = self.server_socket.recv(1024).decode()
-            print(data)
+            yield data
     
-    def send_message(self):
+    def send_message(message : str, self):
+        '''
+        Sends message to server.
+        '''
         while True:
-            message = input('Message: ')
             self.server_socket.send(message.encode())
 
 if __name__ == "__main__":
