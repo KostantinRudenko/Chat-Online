@@ -12,12 +12,16 @@ def chat_window():
         nonlocal username
         eng = Engine()
         message = message_field.get(0.0, END)
-        message_field.clear(0.0, END)
-        
+        message_field.clear(0.0, END) 
         client.send_message(f'{eng.current_time()} {username} {message}')
-        recv_message = client.recieve_message()
-        chat_field.insert(0.0, recv_message + '\n')
-        eng.write_log(message)
+        chat_field.insert(0.0, f'{eng.current_time()} {username} {message}' + '\n')
+        eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
+    
+    def recv_message():
+        eng = Engine()
+        message = client.receive_message()
+        chat_field.insert(0.0, message)
+        eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
         
 
 
@@ -66,15 +70,22 @@ def chat_window():
                     column=col)
     
     
-    client = Client()
-    client.socket_client()
-    chat_field.insert(0.0, f'[LOG] User {username} was connected to the server.\n')
+    
+    if is_host:
+        host_server = Server(ip, port)
+        chat_field.insert(0.0, f'[LOG] Server was created!')
+    else:
+        client = Client(client_ip, client_port)
+        client.socket_client()
+        chat_field.insert(0.0, f'[LOG] User {username} was connected to the server.\n')
 
     
 
 def host_window():
     def check():
+        global ip, port, is_host
         eng = Engine()
+        is_host = True
         ip = ip_field.get(0.0, END).strip()
         port = port_field.get(0.0, END).strip()
         check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port)]
@@ -85,8 +96,6 @@ def host_window():
                              message='Error. Something is wrong! Please, check your IP or port!')
                 break
             check_count += 1
-        host_server = Server(ip, port)
-        host_server.socket_server()
         if check_count == len(check_list):
             chat_window()
 
@@ -125,10 +134,11 @@ def host_window():
 
 def connect_window():
     def check():
+        global client_ip, client_port
         eng = Engine()
-        ip = ip_field.get(0.0, END).strip()
-        port = port_field.get(0.0, END).strip()
-        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port)]
+        client_ip = ip_field.get(0.0, END).strip()
+        client_port = port_field.get(0.0, END).strip()
+        check_list = [eng.is_empty(client_ip), eng.is_ip(client_ip), eng.is_port(client_port)]
         check_count = 0
         for check in check_list:
             if not check:
@@ -137,7 +147,6 @@ def connect_window():
                 break
             check_count += 1
         if check_count == len(check_list):
-            client = Client(ip, port)
             chat_window()
     alt_window = Toplevel()
     alt_window.geometry(f'{CONN_WIDTH}x{CONN_HEIGHT}')
@@ -172,13 +181,10 @@ def connect_window():
     for widget in widgets:
         widget.pack(anchor=ANCHOR_NORTH)
 
-def open_help_link():
-    try:
-        os.system(WEBBROWSER_PROMPT)
-    except:
-        os.system(EDGE_PROMPT)
+
 
 window = Tk()
+main_engine = Engine()
 window.geometry(f'{MAIN_WIDTH}x{MAIN_HEIGHT}')
 window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
 window.title('Chat Online v1.0.0')
@@ -209,7 +215,7 @@ empty_label3 = Label(width=LABEL_WIDTH,
 help_button = Button(width=BUTTON_WIDTH,
                      height=BUTTON_HEIGHT,
                      text='Help',
-                     command=open_help_link)
+                     command=main_engine.open_help_link())
 
 widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3,
            help_button]
