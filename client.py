@@ -5,7 +5,7 @@ from config import *
 
 class Client:
 
-    def __init__(self) -> None:
+    def __init__(self, ip, port) -> None:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((HOST, PORT))
 

@@ -36,7 +36,7 @@ class Server: # Main class
                             for client in self.connected_clients:
                                 if client == client_socket:
                                     client.send(b'200 : OK')
-                                else:
+                                elif client != client_socket:
                                     client_socket.send(data)
             except socket.error as e:
                 if e.errno == 10035:
