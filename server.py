@@ -1,53 +1,48 @@
-'''import socket'''
+import socket
 import select
-import asyncio
 
 from config import *
 from exceptions import *
 
-class Server(asyncio.Protocol): # Main class
+class Server:
     '''
     This class has functions for starting a new server and accepting clients.
     '''
 
-    async def __init__(self) -> None:
+    def __init__(self, host, port) -> None:
         '''
         Runs the server. Saves total info
         '''
-        self.connected_clients = {}
         self.client_count = 0
 
-    def broadcast_message(self):
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.bind((host, int(port)))
+        self.server_socket.listen(CLIENT_COUNT)
+        
+    def broadcast_message(self, clients : dict) -> str:
         '''
         Receives messages from clients and sends them to every client.
         '''
         while True:
-            for client_socket in self.connected_clients:
+            for _, client_socket in clients.items():
                 ready_to_read, _, _ = select.select([client_socket], [], [], 0)
                 if ready_to_read:
                     data = client_socket.recv(1024)
                     if not data:
                         pass
                     else:
-                        for client in self.connected_clients:
-                            if client == client_socket:
-                                client.send(b'200 : OK')
-                            elif client != client_socket:
-                                client_socket.send(data)
+                        for client in clients.values():
+                            client.send(data)
+                        return data
 
-    def client_accepting(self, transport) -> None:
+    def client_accepting(self):
         '''
         Accepts inccoming client's connections. Saves clients socket and address.
         
         '''
-        client = transport.get_exctra_info('peername')
-        self.connected_clients[id(client)] = client
         while True:
-            pass
+            client, addr = self.server_socket.accept()
 
-async def main():
-    server = await asyncio.start_server(Server, HOST, PORT)
-    await server.serve_forever()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+            self.client_count += 1
+            
+            yield {addr : client}

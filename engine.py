@@ -73,6 +73,7 @@ class Engine:
         log_file.write(f'DATA FOR THE {date.year}-{date.month}-{date.day}\n')
         log_file.write(string)
         log_file.close()
+
     def open_help_link(self):
         '''
         Open Link to the WIKI page

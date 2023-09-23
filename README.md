@@ -19,6 +19,6 @@ User can get help by typing "@Kostantin_Rudenko" in the contact search field in 
 
 Kostantin Rudenko support project and contribute to the project.
 # Made by...
-Database part of the project is made by Kostantin Rudenko.
+Socket and Client parts of the project are made by Kostantin Rudenko.
 
 User Interface part of the project is made by Andrew Khukhrianskyi.
