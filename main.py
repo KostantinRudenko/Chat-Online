@@ -4,85 +4,16 @@ import os
 from tkinter import *
 from config import *
 from engine import Engine
-from server import Server
-from client import Client
-
-def chat_window():
-    def send_message():
-        nonlocal username
-        eng = Engine()
-        message = message_field.get(0.0, END)
-        message_field.clear(0.0, END) 
-        client.send_message(f'{eng.current_time()} {username} {message}')
-        chat_field.insert(0.0, f'{eng.current_time()} {username} {message}' + '\n')
-        eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
-    
-    def recv_message():
-        eng = Engine()
-        message = client.receive_message()
-        chat_field.insert(0.0, message)
-        eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
-        
-
-
-    eng = Engine()
-    username = eng.generate_random_name()
-    mb.showinfo(title='Your name!',
-                message=f'Your name is {username}. Welcome to the chat!')
-    alt_window = Toplevel()
-    alt_window.geometry(f'{CHAT_WIDTH}x{CHAT_HEIGHT}')
-    alt_window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
-    alt_window.title('Chat window')
-    chat_label = Label(alt_window,
-                       width=LABEL_WIDTH,
-                       height=LABEL_HEIGHT,
-                       text='Chat window')
-    chat_field = Text(alt_window,
-                      width=CHAT_TEXT_WIDTH,
-                      height=CHAT_TEXT_HEIGHT)
-    scrollbar = Scrollbar(alt_window,
-                          orient=VERTICAL,
-                          command=chat_field.yview)
-    message_label = Label(alt_window,
-                          width=LABEL_WIDTH,
-                          height = LABEL_HEIGHT,
-                          text='Enter your message below')
-    
-    message_field = Text(alt_window,
-                         width=FIELD_WIDTH,
-                         height=FIELD_HEIGHT)
-    send_button = Button(alt_window,
-                         width=BUTTON_WIDTH,
-                         height=BUTTON_HEIGHT,
-                         text='SEND!',
-                         command=send_message)
-    
-    widgets = {chat_label : (0, 3),
-               chat_field : (1, 3),
-               scrollbar : (1, 4),
-               message_label : (2, 3),
-               message_field : (3, 3),
-               send_button : (4, 3)}
-    chat_field['yscrollcommand'] = scrollbar.set
-    for widget, coords in widgets.items():
-        row_pos, col = coords
-        widget.grid(row=row_pos,
-                    column=col)
-    
-    
-    
-    if is_host:
-        host_server = Server(ip, port)
-        chat_field.insert(0.0, f'[LOG] Server was created!')
-    else:
-        client = Client(client_ip, client_port)
-        client.socket_client()
-        chat_field.insert(0.0, f'[LOG] User {username} was connected to the server.\n')
-
-    
+from chat_window import ChatWindow
 
 def host_window():
+    '''
+    Window for creating a new server(chat)
+    '''
     def check():
+        '''
+        Checking if server ip or server port are entered for creating the server
+        '''
         global ip, port, is_host
         eng = Engine()
         is_host = True
@@ -97,7 +28,8 @@ def host_window():
                 break
             check_count += 1
         if check_count == len(check_list):
-            chat_window()
+            chat_windows = ChatWindow()
+            chat_windows.admin_window(ip, port)
 
     alt_window = Toplevel()
     alt_window.geometry(f'{HOST_WIDTH}x{HOST_HEIGHT}')
@@ -133,7 +65,13 @@ def host_window():
 
 
 def connect_window():
+    '''
+    Window for connecting to a server(chat)
+    '''
     def check():
+        '''
+        Checking if ip and port are entered or one(both) of them isn't(aren't)
+        '''
         global client_ip, client_port
         eng = Engine()
         client_ip = ip_field.get(0.0, END).strip()
@@ -147,7 +85,9 @@ def connect_window():
                 break
             check_count += 1
         if check_count == len(check_list):
-            chat_window()
+            chat_windows = ChatWindow()
+            #FIXME needs to write what will happen if client connect
+            
     alt_window = Toplevel()
     alt_window.geometry(f'{CONN_WIDTH}x{CONN_HEIGHT}')
 
@@ -215,7 +155,7 @@ empty_label3 = Label(width=LABEL_WIDTH,
 help_button = Button(width=BUTTON_WIDTH,
                      height=BUTTON_HEIGHT,
                      text='Help',
-                     command=main_engine.open_help_link())
+                     command=main_engine.open_help_link)
 
 widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3,
            help_button]
@@ -224,6 +164,3 @@ for widget in widgets:
     widget.pack(anchor=ANCHOR_NORTH)
 
 window.mainloop()
-        
-    
-        
