@@ -4,7 +4,7 @@ import os
 from tkinter import *
 from config import *
 from engine import Engine
-from chat_window import ChatWindow
+from chat_window import *
 
 def host_window():
     '''
@@ -121,7 +121,8 @@ def connect_window():
     for widget in widgets:
         widget.pack(anchor=ANCHOR_NORTH)
 
-
+def close_window():
+    Engine.window_destroy(window, False)
 
 window = Tk()
 main_engine = Engine()
@@ -157,8 +158,16 @@ help_button = Button(width=BUTTON_WIDTH,
                      text='Help',
                      command=main_engine.open_help_link)
 
+empty_label4 = Label(width=LABEL_WIDTH,
+                     height=LABEL_HEIGHT)
+
+close_button = Button(width=BUTTON_WIDTH,
+                      height=BUTTON_HEIGHT,
+                      text='Close',
+                      command=close_window)
+
 widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3,
-           help_button]
+           help_button, empty_label4, close_button]
 
 for widget in widgets:
     widget.pack(anchor=ANCHOR_NORTH)
