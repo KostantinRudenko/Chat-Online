@@ -2,10 +2,15 @@ import re
 import os
 
 from datetime import datetime
+from tkinter import Tk
 from random import *
+import threading
 from config import *
 
 class Engine:
+    def __init__(self) -> None:
+        self.event = threading.Event()
+
     def read_data(self, text : str, regex_option = None) -> str:
         '''
         Function reads a text from UI part
@@ -73,6 +78,20 @@ class Engine:
         log_file.write(f'DATA FOR THE {date.year}-{date.month}-{date.day}\n')
         log_file.write(string)
         log_file.close()
+    
+    def window_destroy(window : Tk, is_threads : bool, threads : list = None):
+        '''
+        Check if the window exists
+        '''
+        if is_threads == True:
+            for thread in threads:
+                import ctypes
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), ctypes.py_object(SystemExit))
+        else:
+            try:
+                window.destroy()
+            except:
+                pass
 
     def open_help_link(self):
         '''

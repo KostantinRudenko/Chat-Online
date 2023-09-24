@@ -5,6 +5,7 @@ import tkinter.messagebox as mb
 import threading
 from tkinter import *
 from config import *
+from main import window
 from engine import Engine
 
 class ChatWindow:
@@ -150,8 +151,14 @@ class ChatWindow:
             data = server.broadcast_message(self.clients)
             self.print_message(data, chat_field)
 
-        writer = threading.Thread(target=broadcasting, name='Message Writer', daemon=False)
-        accepting_thread = threading.Thread(target=accepting, name="Servant of the People", daemon=False)
-        
-        accepting_thread.start()
+        # The thread writes and sends messages
+        writer = threading.Thread(target=broadcasting, name='Message Writer')
+        # This thread accepts the clients
+        guard = threading.Thread(target=accepting, name="Servant of the People")
+        # This thread "kills" the threads and close the application
+        closer = threading.Thread(target=self.eng.is_open(),
+                                  name='John Wick', args=(window, True, [writer, guard, closer]))
+
+        guard.start()
         writer.start()
+        closer.start()
