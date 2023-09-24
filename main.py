@@ -163,7 +163,7 @@ empty_label4 = Label(width=LABEL_WIDTH,
 
 close_button = Button(width=BUTTON_WIDTH,
                       height=BUTTON_HEIGHT,
-                      text='Close',
+                      text='Exit',
                       command=close_window)
 
 widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3,

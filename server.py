@@ -14,9 +14,14 @@ class Server:
         Runs the server. Saves total info
         '''
         self.client_count = 0
-
+        self.server_socket = None
+        self.host = host
+        self.port = port
+        self.clients = {}
+    
+    def connect_to_server(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((host, int(port)))
+        self.server_socket.bind((HOST, int(PORT))) #FIXME set self.host + self.port instead of config values
         self.server_socket.listen(CLIENT_COUNT)
         
     def broadcast_message(self, clients : dict) -> str:
@@ -44,5 +49,6 @@ class Server:
             client, addr = self.server_socket.accept()
 
             self.client_count += 1
+            self.clients.append({addr : client})
             
             yield {addr : client}

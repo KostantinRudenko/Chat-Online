@@ -5,7 +5,6 @@ import tkinter.messagebox as mb
 import threading
 from tkinter import *
 from config import *
-from main import window
 from engine import Engine
 
 class ChatWindow:
@@ -23,7 +22,7 @@ class ChatWindow:
 
     def __init__(self) -> None:
         self.eng = Engine()
-        self.clients = {}
+        self.client = Client()
 
     def print_message(self, message, chat_field):
         '''
@@ -34,15 +33,13 @@ class ChatWindow:
 
     def chat_window(self, ip, port):
         '''
-        Opens usuall chat window for client.
+        Opens simple chat window for client.
         Client is able to send messages via this window.
         '''
         username = self.eng.generate_random_name()
         mb.showinfo(title='Your name!',
                     message=f'Your name is {username}. Welcome to the chat!')
-        
-        client = Client()
-        client.connect_to(ip, port)
+        self.client.connect_to(ip, port)
 
         def send_message():
             '''
@@ -51,7 +48,7 @@ class ChatWindow:
             message = message_field.get(0.0, END)
             message_field.delete(0.0, END)
             
-            client.send_message(f'{self.eng.current_time()} {username} {message}')
+            self.client.send_message(f'{self.eng.current_time()} {username} {message}')
             chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}' + '\n')
             
             self.eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
@@ -107,7 +104,7 @@ class ChatWindow:
         alt_window = Toplevel()
         alt_window.geometry(f'{CHAT_WIDTH}x{CHAT_HEIGHT}')
         alt_window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
-        alt_window.title('Chat window')
+        alt_window.title('Chat window (ADMIN MODE)')
         
         chat_label = Label(alt_window,
                         width=LABEL_WIDTH,
@@ -115,8 +112,8 @@ class ChatWindow:
                         text='Chat window')
         
         chat_field = Text(alt_window,
-                        width=CHAT_TEXT_WIDTH,
-                        height=CHAT_TEXT_HEIGHT)
+                        width=LOG_CHAT_WIDTH,
+                        height=LOG_CHAT_HEIGHT)
         
         scrollbar = Scrollbar(alt_window,
                             orient=VERTICAL,
@@ -133,31 +130,38 @@ class ChatWindow:
                         column=col)
         
         server = Server(ip, port)
+        server.connect_to_server()
 
         def accepting():
             '''
             Accepts clients, trying to connect to the chat
             '''
             while True:
-                for client, addr in server.client_accepting():
-                    if not client or not addr:
-                        pass
-                    self.clients[addr] = client
+                for self.client, addr in server.client_accepting():
+                    if self.client and addr:
+                        server.clients[addr] = self.client
+                    
         
         def broadcasting():
             '''
             Sends the message to every client and insert it into the admin chat field
             '''
-            data = server.broadcast_message(self.clients)
+            data = server.broadcast_message(server.clients)
             self.print_message(data, chat_field)
+
+        def close_connect():
+            for found in range(len(server.clients)): # FIXME - Bad realization. Need to improve code
+                if server.clients[found] == self.client:
+                    server.clients.pop(found)
+            del self.client
 
         # The thread writes and sends messages
         writer = threading.Thread(target=broadcasting, name='Message Writer')
         # This thread accepts the clients
         guard = threading.Thread(target=accepting, name="Servant of the People")
         # This thread "kills" the threads and close the application
-        closer = threading.Thread(target=self.eng.is_open(),
-                                  name='John Wick', args=(window, True, [writer, guard, closer]))
+        closer = threading.Thread(target=close_connect,
+                                  name='John Wick')
 
         guard.start()
         writer.start()
