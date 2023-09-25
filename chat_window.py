@@ -23,6 +23,8 @@ class ChatWindow:
     def __init__(self) -> None:
         self.eng = Engine()
         self.client = Client()
+        self.main_server = None
+        self.close_button = None
 
     def print_message(self, message, chat_field):
         '''
@@ -30,6 +32,12 @@ class ChatWindow:
         '''
         chat_field.insert(0.0, message)
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
+    
+    def close_conn(self):
+        self.main_server.close()
+        mb.showinfo(title='Server Staus',
+                    message='The server is closed!')
+        self.close_button.config(state='disabled')
 
     def chat_window(self, ip, port):
         '''
@@ -118,10 +126,17 @@ class ChatWindow:
         scrollbar = Scrollbar(alt_window,
                             orient=VERTICAL,
                             command=chat_field.yview)
+        
+        self.close_button = Button(alt_window,
+                              height=BUTTON_HEIGHT,
+                              width=BUTTON_WIDTH,
+                              text='Close the Server',
+                              command=self.close_conn)
 
         widgets = {chat_label : (0, 3),
                    chat_field : (1, 3),
-                    scrollbar : (1, 4)}
+                    scrollbar : (1, 4),
+                 self.close_button : (2, 3)}
         
         chat_field['yscrollcommand'] = scrollbar.set
         for widget, coords in widgets.items():
@@ -130,17 +145,19 @@ class ChatWindow:
                         column=col)
         
         server = Server(ip, port)
-        server.connect_to_server()
+        self.main_server = server.create_server()
 
         def accepting():
             '''
             Accepts clients, trying to connect to the chat
             '''
             while True:
-                for self.client, addr in server.client_accepting():
-                    if self.client and addr:
-                        server.clients[addr] = self.client
-                    
+                try:
+                    for self.client, addr in server.client_accepting():
+                        if self.client and addr:
+                            server.clients[addr] = self.client
+                except:
+                    pass
         
         def broadcasting():
             '''
