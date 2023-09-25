@@ -79,19 +79,19 @@ class Engine:
         log_file.write(string)
         log_file.close()
     
-    def window_destroy(window : Tk, is_threads : bool, threads : list = None):
+    def window_destroy(window : Tk):
         '''
         Check if the window exists
         '''
-        if is_threads == True:
-            for thread in threads:
-                import ctypes
+        try:
+            window.destroy()
+        except:
+            pass
+    
+    def thread_destroy(self, threads):
+        import ctypes
+        for thread in threads:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), ctypes.py_object(SystemExit))
-        else:
-            try:
-                window.destroy()
-            except:
-                pass
 
     def open_help_link(self):
         '''

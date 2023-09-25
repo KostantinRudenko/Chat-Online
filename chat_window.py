@@ -25,6 +25,7 @@ class ChatWindow:
         self.client = Client()
         self.main_server = None
         self.close_button = None
+        self.threads = None
 
     def print_message(self, message, chat_field):
         '''
@@ -35,6 +36,7 @@ class ChatWindow:
     
     def close_conn(self):
         self.main_server.close()
+        self.eng.thread_destroy(self.threads)
         mb.showinfo(title='Server Staus',
                     message='The server is closed!')
         self.close_button.config(state='disabled')
@@ -177,9 +179,10 @@ class ChatWindow:
         # This thread accepts the clients
         guard = threading.Thread(target=accepting, name="Servant of the People")
         # This thread "kills" the threads and close the application
-        closer = threading.Thread(target=close_connect,
-                                  name='John Wick')
+        '''closer = threading.Thread(target=self.close_conn,
+                                  name='John Wick')'''
+        
+        self.threads = [writer, guard]
 
         guard.start()
         writer.start()
-        closer.start()

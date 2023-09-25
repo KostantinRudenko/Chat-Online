@@ -121,9 +121,6 @@ def connect_window():
     for widget in widgets:
         widget.pack(anchor=ANCHOR_NORTH)
 
-def close_window():
-    Engine.window_destroy(window, False)
-
 window = Tk()
 main_engine = Engine()
 window.geometry(f'{MAIN_WIDTH}x{MAIN_HEIGHT}')
@@ -164,7 +161,7 @@ empty_label4 = Label(width=LABEL_WIDTH,
 close_button = Button(width=BUTTON_WIDTH,
                       height=BUTTON_HEIGHT,
                       text='Exit',
-                      command=close_window)
+                      command=lambda: Engine.window_destroy(window))
 
 widgets = [option_label, empty_label1, create_button, empty_label2, connect_button, empty_label3,
            help_button, empty_label4, close_button]
