@@ -89,6 +89,9 @@ class Engine:
             pass
     
     def thread_destroy(self, threads):
+        '''
+        Closes all of the threads that were given to it as arguments
+        '''
         import ctypes
         for thread in threads:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), ctypes.py_object(SystemExit))

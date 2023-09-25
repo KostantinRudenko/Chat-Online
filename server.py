@@ -20,6 +20,9 @@ class Server:
         self.clients = {}
     
     def create_server(self):
+        '''
+        Creates a new server and returns the socket
+        '''
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((HOST, int(PORT))) #FIXME set self.host + self.port instead of config values
         self.server_socket.listen(CLIENT_COUNT)
@@ -51,6 +54,6 @@ class Server:
             client, addr = self.server_socket.accept()
 
             self.client_count += 1
-            self.clients.append({addr : client})
+            self.clients[addr] = client
             
             yield {addr : client}

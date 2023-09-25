@@ -35,11 +35,14 @@ class ChatWindow:
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
     def close_conn(self):
+        '''
+        Closes the server
+        '''
         self.main_server.close()
         self.eng.thread_destroy(self.threads)
+        self.close_button.config(state='disabled')
         mb.showinfo(title='Server Staus',
                     message='The server is closed!')
-        self.close_button.config(state='disabled')
 
     def chat_window(self, ip, port):
         '''
@@ -169,6 +172,9 @@ class ChatWindow:
             self.print_message(data, chat_field)
 
         def close_connect():
+            '''
+            er...
+            '''
             for found in range(len(server.clients)): # FIXME - Bad realization. Need to improve code
                 if server.clients[found] == self.client:
                     server.clients.pop(found)
