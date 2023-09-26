@@ -9,11 +9,11 @@ class Client():
         
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def connect_to(self, ip, port):
+    def connect_to(self, ip : str, port : int) -> None:
         '''
         Connects client to the server(chat)
         '''
-        self.client_socket.connect((ip, port))
+        self.client_socket.connect((ip, int(port)))
 
     def receive_message(self):
         '''

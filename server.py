@@ -50,10 +50,7 @@ class Server:
         Accepts inccoming client's connections. Saves clients socket and address.
         
         '''
-        while True:
-            client, addr = self.server_socket.accept()
+        client, addr = self.server_socket.accept()
 
-            self.client_count += 1
-            self.clients[addr] = client
-            
-            yield {addr : client}
+        self.client_count += 1
+        self.clients[addr] = client

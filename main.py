@@ -86,7 +86,7 @@ def connect_window():
             check_count += 1
         if check_count == len(check_list):
             chat_windows = ChatWindow()
-            #FIXME needs to write what will happen if client connect
+            chat_windows.chat_window(client_ip, client_port)
             
     alt_window = Toplevel()
     alt_window.geometry(f'{CONN_WIDTH}x{CONN_HEIGHT}')

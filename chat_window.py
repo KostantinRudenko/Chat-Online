@@ -10,7 +10,7 @@ from engine import Engine
 class ChatWindow:
 
     '''
-    Class with two types ofchat windows.
+    Class with two types of chat windows.
 
     First is the chat window for client to send messages and receive them from other clients.
 
@@ -157,12 +157,7 @@ class ChatWindow:
             Accepts clients, trying to connect to the chat
             '''
             while True:
-                try:
-                    for self.client, addr in server.client_accepting():
-                        if self.client and addr:
-                            server.clients[addr] = self.client
-                except:
-                    pass
+                server.client_accepting()
         
         def broadcasting():
             '''
@@ -184,9 +179,6 @@ class ChatWindow:
         writer = threading.Thread(target=broadcasting, name='Message Writer')
         # This thread accepts the clients
         guard = threading.Thread(target=accepting, name="Servant of the People")
-        # This thread "kills" the threads and close the application
-        '''closer = threading.Thread(target=self.close_conn,
-                                  name='John Wick')'''
         
         self.threads = [writer, guard]
 
