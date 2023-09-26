@@ -65,9 +65,14 @@ class ChatWindow:
             chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}' + '\n')
             
             self.eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
+        
+        def close_connection(client : socket.socket, buttons : list[Button]):
+            client.close()
+            for button in buttons:
+                button.config(default='disabled')
     
         alt_window = Toplevel()
-        alt_window.geometry(f'{CHAT_WIDTH}x{CHAT_HEIGHT}')
+        alt_window.geometry(f'{CLIENT_CHAT_WIDTH}x{CLIENT_CHAT_HEIGHT}')
         alt_window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
         alt_window.title('Chat window')
         chat_label = Label(alt_window,
@@ -96,12 +101,24 @@ class ChatWindow:
                             text='SEND!',
                             command=send_message)
         
+        empty_lable = Label(alt_window,
+                    width=LABEL_WIDTH,
+                    height=LABEL_HEIGHT)
+
+        close_button = Button(alt_window,
+                      width=BUTTON_WIDTH,
+                      height=BUTTON_HEIGHT,
+                      text='Exit!',
+                      command=lambda: close_connection(self.client, [send_button, close_button]))
+        
         widgets = {chat_label : (0, 3),
                 chat_field : (1, 3),
                 scrollbar : (1, 4),
                 message_label : (2, 3),
                 message_field : (3, 3),
-                send_button : (4, 3)}
+                send_button : (4, 3),
+                empty_lable : (5, 3),
+                close_button : (6, 3)}
         chat_field['yscrollcommand'] = scrollbar.set
         for widget, coords in widgets.items():
             row_pos, col = coords

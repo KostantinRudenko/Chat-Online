@@ -1,13 +1,15 @@
 import socket
-import threading
 from config import *
 
 
 class Client():
-
+    '''
+    Client class has methods for connection to a server, receiving and message sending
+    '''
     def __init__(self) -> None:
         
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        return self.client_socket
 
     def connect_to(self, ip : str, port : int) -> None:
         '''
