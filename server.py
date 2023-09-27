@@ -42,7 +42,7 @@ class Server:
                         pass
                     elif data == CLOSE_MESSAGE:
                         self.clients.pop(addr)
-                        return tuple(False)
+                        return False
                     else:
                         for client in clients.values():
                             client.send(data)

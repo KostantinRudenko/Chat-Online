@@ -68,6 +68,7 @@ class ChatWindow:
         
         def close_connection(client : socket.socket, buttons : list[Button]):
             client.close()
+            self.main_server.send(CLOSE_MESSAGE)
             for button in buttons:
                 button.config(default='disabled')
     
@@ -181,7 +182,10 @@ class ChatWindow:
             Sends the message to every client and insert it into the admin chat field
             '''
             data = server.broadcast_message(server.clients)
-            if data is tuple:
+            try:
+                if int(data) == 1:
+                    pass
+            except:
                 pass
             self.print_message(data, chat_field)
 
