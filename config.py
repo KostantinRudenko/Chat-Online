@@ -1,3 +1,4 @@
+from random import randint
 # Status Codes
 
 STATUS_CODE = {100 : '100 : Wainting',
@@ -13,6 +14,7 @@ PORT = 8080
 #Client Datas
 
 CLIENT_COUNT = 3
+CLOSE_MESSAGE = str(randint(0, 100000000000000000000))
 
 #UI options
 CHAT_WIDTH = 500

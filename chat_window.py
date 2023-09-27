@@ -181,6 +181,8 @@ class ChatWindow:
             Sends the message to every client and insert it into the admin chat field
             '''
             data = server.broadcast_message(server.clients)
+            if data is tuple:
+                pass
             self.print_message(data, chat_field)
 
         def close_connect():

@@ -9,7 +9,6 @@ class Client():
     def __init__(self) -> None:
         
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        return self.client_socket
 
     def connect_to(self, ip : str, port : int) -> None:
         '''

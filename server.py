@@ -24,22 +24,25 @@ class Server:
         Creates a new server and returns the socket
         '''
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((HOST, int(PORT))) #FIXME set self.host + self.port instead of config values
+        self.server_socket.bind((self.host, int(self.port))) #FIXME set self.host + self.port instead of config values
         self.server_socket.listen(CLIENT_COUNT)
 
         return self.server_socket
         
-    def broadcast_message(self, clients : dict) -> str:
+    def broadcast_message(self, clients : dict) -> str | tuple:
         '''
         Receives messages from clients and sends them to every client.
         '''
         while True:
-            for _, client_socket in clients.items():
+            for addr, client_socket in clients.items():
                 ready_to_read, _, _ = select.select([client_socket], [], [], 0)
                 if ready_to_read:
                     data = client_socket.recv(1024)
                     if not data:
                         pass
+                    elif data == CLOSE_MESSAGE:
+                        self.clients.pop(addr)
+                        return tuple(False)
                     else:
                         for client in clients.values():
                             client.send(data)
