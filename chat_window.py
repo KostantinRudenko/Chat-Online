@@ -25,24 +25,33 @@ class ChatWindow:
         self.client = Client()
         self.main_server = None
         self.close_button = None
-        self.threads = None
+        self.server_threads = None
+        self.client_threads = None
 
-    def print_message(self, message, chat_field):
+    def print_message(self, message, chat_field : Text):
         '''
         Print messages into the chat field.
         '''
         chat_field.insert(0.0, message)
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
-    def close_conn(self):
+    def close_conn(self, subject : Server | Client, threads : list[threading.Thread] = None, buttons : list[Button] = None,
+                   is_client : bool = False):
         '''
-        Closes the server
+        Closes the connection with the subject, close threads, disables buttons
         '''
-        self.main_server.close()
-        self.eng.thread_destroy(self.threads)
-        self.close_button.config(state='disabled')
-        mb.showinfo(title='Server Staus',
-                    message='The server is closed!')
+        if is_client:
+            subject.send(CLOSE_MESSAGE)
+            subject.close()
+
+        elif threads != None:
+            self.eng.thread_destroy(threads)
+        
+        elif buttons != None:
+            for button in buttons:
+                button.config(state='disabled')
+        mb.showinfo(title='Staus',
+                    message='The connection is closed!')
 
     def chat_window(self, ip, port):
         '''
@@ -54,7 +63,7 @@ class ChatWindow:
                     message=f'Your name is {username}. Welcome to the chat!')
         self.client.connect_to(ip, port)
 
-        def send_message():
+        def send_message(message_field):
             '''
             Sends messages to server. 
             '''
@@ -66,11 +75,12 @@ class ChatWindow:
             
             self.eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
         
-        def close_connection(client : socket.socket, buttons : list[Button]):
-            client.close()
-            self.main_server.send(CLOSE_MESSAGE)
-            for button in buttons:
-                button.config(default='disabled')
+        def receiving(chat_field : Text):
+            '''
+            Receives messages from server and print them into the chat field
+            '''
+            data = self.client.receive_message()
+            self.print_message(data, chat_field)
     
         alt_window = Toplevel()
         alt_window.geometry(f'{CLIENT_CHAT_WIDTH}x{CLIENT_CHAT_HEIGHT}')
@@ -100,7 +110,7 @@ class ChatWindow:
                             width=BUTTON_WIDTH,
                             height=BUTTON_HEIGHT,
                             text='SEND!',
-                            command=send_message)
+                            command=lambda: send_message(message_field))
         
         empty_lable = Label(alt_window,
                     width=LABEL_WIDTH,
@@ -110,7 +120,7 @@ class ChatWindow:
                       width=BUTTON_WIDTH,
                       height=BUTTON_HEIGHT,
                       text='Exit!',
-                      command=lambda: close_connection(self.client, [send_button, close_button]))
+                      command=lambda: self.close_conn(self.client, self.client_threads, [send_button, close_button], True))
         
         widgets = {chat_label : (0, 3),
                 chat_field : (1, 3),
@@ -125,6 +135,12 @@ class ChatWindow:
             row_pos, col = coords
             widget.grid(row=row_pos,
                         column=col)
+        
+        postman = threading.Thread(target=receiving, args=chat_field)
+
+        self.client_threads = [postman]
+
+        postman.start()
 
     def admin_window(self, ip, port):
         '''
@@ -154,7 +170,7 @@ class ChatWindow:
                               height=BUTTON_HEIGHT,
                               width=BUTTON_WIDTH,
                               text='Close the Server',
-                              command=self.close_conn)
+                              command=lambda: self.close_conn(self.server_threads))
 
         widgets = {chat_label : (0, 3),
                    chat_field : (1, 3),
@@ -203,7 +219,7 @@ class ChatWindow:
         # This thread accepts the clients
         guard = threading.Thread(target=accepting, name="Servant of the People")
         
-        self.threads = [writer, guard]
+        self.server_threads = [writer, guard]
 
         guard.start()
         writer.start()
