@@ -57,6 +57,9 @@ NOT_RESIZABLE_HEIGHT = False
 
 ANCHOR_NORTH = 'n'
 
+# Log file part
+LOG_DATA_TIME = 'DATA FOR THE'
+
 # Random names part
 RANDOM_START_NAME = ['Random', 'Sussy', 'Bad', 'Ugly', 'Glory', 'Dumb', 'Dull']
 RANDOM_END_NAME = ['Boy', 'Girl', 'Wizard', 'Hole', 'Warlock', 'Guy', 'NotSoGuy']

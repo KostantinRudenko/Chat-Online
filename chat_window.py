@@ -204,16 +204,13 @@ class ChatWindow:
             except:
                 pass
             self.print_message(data, chat_field)
-
+        '''
         def close_connect():
-            '''
-            er...
-            '''
             for found in range(len(server.clients)): # FIXME - Bad realization. Need to improve code
                 if server.clients[found] == self.client:
                     server.clients.pop(found)
             del self.client
-
+        '''
         # The thread writes and sends messages
         writer = threading.Thread(target=broadcasting, name='Message Writer')
         # This thread accepts the clients

@@ -75,7 +75,7 @@ class Engine:
         '''
         date = datetime.now()
         log_file = open('log.txt', 'a')
-        log_file.write(f'DATA FOR THE {date.year}-{date.month}-{date.day}\n')
+        log_file.write(f'{LOG_DATA_TIME} {date.year}-{date.month}-{date.day}\n')
         log_file.write(string)
         log_file.close()
     
@@ -83,10 +83,7 @@ class Engine:
         '''
         Check if the window exists
         '''
-        try:
-            window.destroy()
-        except:
-            pass
+        window.destroy()
     
     def thread_destroy(self, threads):
         '''
