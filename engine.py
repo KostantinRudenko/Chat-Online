@@ -73,15 +73,24 @@ class Engine:
         '''
         sends all data to the log file
         '''
-        date = datetime.now()
         log_file = open('log.txt', 'a')
-        log_file.write(f'{LOG_DATA_TIME} {date.year}-{date.month}-{date.day}\n')
-        log_file.write(string)
+        date = datetime.now()
+        today = f'DATE FOR THE {date.year}-{date.month}-{date.day}'
+        
+        with open('log.txt', 'r') as file:
+            text = file.read()
+            data = self.read_data(text, r'DATA FOR THE \d+-\d+-\d+')
+            
+            if data[-1] == today:
+                log_file.write(string)
+            log_file.write(today + '\n' + string + '\n')
+            
+            file.close()
         log_file.close()
     
     def window_destroy(window : Tk):
         '''
-        Check if the window exists
+        Destroys window
         '''
         window.destroy()
     
