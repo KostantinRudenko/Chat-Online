@@ -42,14 +42,18 @@ class ChatWindow:
         '''
         if is_client:
             subject.send(CLOSE_MESSAGE)
-            subject.close()
+        
+        subject.close()      
 
-        elif threads != None:
+        if threads != None:
             self.eng.thread_destroy(threads)
         
-        elif buttons != None:
+        if buttons != None:
             for button in buttons:
                 button.config(state='disabled')
+
+        del subject
+        
         mb.showinfo(title='Staus',
                     message='The connection is closed!')
 
@@ -120,7 +124,8 @@ class ChatWindow:
                       width=BUTTON_WIDTH,
                       height=BUTTON_HEIGHT,
                       text='Exit!',
-                      command=lambda: self.close_conn(self.client, self.client_threads, [send_button, close_button], True))
+                      command=lambda: self.close_conn(self.client, self.client_threads, 
+                                                      [send_button, close_button], True))
         
         widgets = {chat_label : (0, 3),
                 chat_field : (1, 3),
@@ -170,7 +175,8 @@ class ChatWindow:
                               height=BUTTON_HEIGHT,
                               width=BUTTON_WIDTH,
                               text='Close the Server',
-                              command=lambda: self.close_conn(self.server_threads))
+                              command=lambda: self.close_conn(subject=self.main_server.server_socket,
+                                                              threads=self.server_threads))
 
         widgets = {chat_label : (0, 3),
                    chat_field : (1, 3),
@@ -183,34 +189,28 @@ class ChatWindow:
             widget.grid(row=row_pos,
                         column=col)
         
-        server = Server(ip, port)
-        self.main_server = server.create_server()
+        self.main_server = Server(ip, port)
 
         def accepting():
             '''
             Accepts clients, trying to connect to the chat
             '''
             while True:
-                server.client_accepting()
+                self.main_server.client_accepting()
         
         def broadcasting():
             '''
             Sends the message to every client and insert it into the admin chat field
             '''
-            data = server.broadcast_message(server.clients)
+            data = self.main_server.broadcast_message(
+                                    self.main_server.clients)
             try:
-                if int(data) == 1:
+                if int(data) == 0:
                     pass
             except:
                 pass
             self.print_message(data, chat_field)
-        '''
-        def close_connect():
-            for found in range(len(server.clients)): # FIXME - Bad realization. Need to improve code
-                if server.clients[found] == self.client:
-                    server.clients.pop(found)
-            del self.client
-        '''
+
         # The thread writes and sends messages
         writer = threading.Thread(target=broadcasting, name='Message Writer')
         # This thread accepts the clients

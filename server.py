@@ -18,16 +18,9 @@ class Server:
         self.host = host
         self.port = port
         self.clients = {}
-    
-    def create_server(self):
-        '''
-        Creates a new server and returns the socket
-        '''
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.host, int(self.port))) #FIXME set self.host + self.port instead of config values
+        self.server_socket.bind((self.host, int(self.port))) 
         self.server_socket.listen(CLIENT_COUNT)
-
-        return self.server_socket
         
     def broadcast_message(self, clients : dict) -> str | tuple:
         '''
