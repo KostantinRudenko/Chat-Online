@@ -19,7 +19,7 @@ class Server:
         self.port = port
         self.clients = {}
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.host, int(self.port))) 
+        self.server_socket.bind((self.host, self.port)) 
         self.server_socket.listen(CLIENT_COUNT)
         
     def broadcast_message(self, clients : dict) -> str | tuple:

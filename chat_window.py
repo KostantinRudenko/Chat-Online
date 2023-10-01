@@ -35,7 +35,9 @@ class ChatWindow:
         chat_field.insert(0.0, message)
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
-    def close_conn(self, subject : Server | Client, threads : list[threading.Thread] = None, buttons : list[Button] = None,
+    def close_conn(self, subject : Server | Client, 
+                   threads : list[threading.Thread] = None, 
+                   buttons : list[Button] = None,
                    is_client : bool = False):
         '''
         Closes the connection with the subject, close threads, disables buttons
@@ -189,7 +191,7 @@ class ChatWindow:
             widget.grid(row=row_pos,
                         column=col)
         
-        self.main_server = Server(ip, port)
+        self.main_server = Server(ip, int(port))
 
         def accepting():
             '''
