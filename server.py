@@ -46,7 +46,10 @@ class Server:
         Accepts inccoming client's connections. Saves clients socket and address.
         
         '''
-        client, addr = self.server_socket.accept()
+        try:
+            client, addr = self.server_socket.accept()
 
-        self.client_count += 1
-        self.clients[addr] = client
+            self.client_count += 1
+            self.clients[addr] = client
+        except OSError:
+            pass

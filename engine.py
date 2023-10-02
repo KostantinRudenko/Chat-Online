@@ -3,6 +3,7 @@ import os
 
 from datetime import datetime
 from tkinter import Tk
+from tkinter import Button
 from random import *
 import threading
 from config import *
@@ -94,7 +95,7 @@ class Engine:
         '''
         window.destroy()
     
-    def thread_destroy(self, threads):
+    def thread_destroy(self, threads : list[threading.Thread]):
         '''
         Closes all of the threads that were given to it as arguments
         '''
@@ -102,6 +103,13 @@ class Engine:
         for thread in threads:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), 
                                                            ctypes.py_object(SystemExit))
+    
+    def disable_button(self, buttons : list[Button]):
+        '''
+        makes the buttons disabled
+        '''
+        for button in buttons:
+            button.config(state='disabled')
 
     def open_help_link(self):
         '''

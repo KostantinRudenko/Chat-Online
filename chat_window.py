@@ -35,22 +35,30 @@ class ChatWindow:
         chat_field.insert(0.0, message)
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
-    def close_conn(self, subject : Server | Client, threads : list[threading.Thread] = None, buttons : list[Button] = None,
-                   is_client : bool = False):
+    def close_conn(self, subject : socket.socket,
+                   threads : list[threading.Thread] = None,
+                   buttons : list[Button] = None,
+                   is_client : bool = False,
+                   chat : Text = None):
         '''
         Closes the connection with the subject, close threads, disables buttons
         '''
         if is_client:
             subject.send(CLOSE_MESSAGE)
         
-        subject.close()      
+        chat.insert(0.0, 'Connection is closed!')
+        subject.close()
 
         if threads != None:
             self.eng.thread_destroy(threads)
+            if not is_client:
+                del self.server_threads
+                del threads
+            else:
+                del self.client_threads
         
         if buttons != None:
-            for button in buttons:
-                button.config(state='disabled')
+            self.eng.disable_button(buttons)
 
         del subject
         
@@ -74,7 +82,7 @@ class ChatWindow:
             message = message_field.get(0.0, END)
             message_field.delete(0.0, END)
             
-            self.client.send_message(f'{self.eng.current_time()} {username} {message}')
+            self.client.send_message(f'{self.eng.current_time()} {username} {message}' + '\n')
             chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}' + '\n')
             
             self.eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
@@ -121,12 +129,12 @@ class ChatWindow:
                     height=LABEL_HEIGHT)
 
         close_button = Button(alt_window,
-                      width=BUTTON_WIDTH,
-                      height=BUTTON_HEIGHT,
-                      text='Exit!',
-                      command=lambda: self.close_conn(self.client, self.client_threads, 
-                                                      [send_button, close_button], True))
-        
+                    width=BUTTON_WIDTH,
+                    height=BUTTON_HEIGHT,
+                    text='Exit!',
+                    command=lambda: self.close_conn(self.client, self.client_threads, 
+                                                    [send_button, close_button], True))
+
         widgets = {chat_label : (0, 3),
                 chat_field : (1, 3),
                 scrollbar : (1, 4),
@@ -171,17 +179,21 @@ class ChatWindow:
                             orient=VERTICAL,
                             command=chat_field.yview)
         
-        self.close_button = Button(alt_window,
-                              height=BUTTON_HEIGHT,
-                              width=BUTTON_WIDTH,
-                              text='Close the Server',
-                              command=lambda: self.close_conn(subject=self.main_server.server_socket,
-                                                              threads=self.server_threads))
-
+        close_button = Button(alt_window,
+            height=BUTTON_HEIGHT,
+            width=BUTTON_WIDTH,
+            text='Close the Server',
+            command=lambda:
+            
+            self.close_conn(subject=self.main_server.server_socket,
+                                            threads=self.server_threads,
+                                            buttons = [close_button],
+                                            chat=chat_field)
+                              )
         widgets = {chat_label : (0, 3),
                    chat_field : (1, 3),
                     scrollbar : (1, 4),
-                 self.close_button : (2, 3)}
+                    close_button : (2, 3)}
         
         chat_field['yscrollcommand'] = scrollbar.set
         for widget, coords in widgets.items():
