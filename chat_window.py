@@ -223,10 +223,13 @@ class ChatWindow:
                 pass
             self.print_message(data, chat_field)
 
+
         # The thread writes and sends messages
         writer = threading.Thread(target=broadcasting, name='Message Writer')
+
         # This thread accepts the clients
         guard = threading.Thread(target=accepting, name="Servant of the People")
+
         
         self.server_threads = [writer, guard]
 

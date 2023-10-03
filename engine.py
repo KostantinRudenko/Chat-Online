@@ -79,13 +79,13 @@ class Engine:
         today = f'DATE FOR THE {date.year}-{date.month}-{date.day}'
         
         with open('log.txt', 'r') as file:
-            text = file.read()
-            data = self.read_data(text, r'DATA FOR THE \d+-\d+-\d+')
+            text = file.read() # Reading the file
+            data = self.read_data(text, r'DATA FOR THE \d+-\d+-\d+') # Finding the dates
             
-            if data[-1] == today:
+            if data[-1] == today: # Checking if the last date is same to today's
                 log_file.write(string)
             log_file.write(today + '\n' + string + '\n')
-            
+
             file.close()
         log_file.close()
     
@@ -102,7 +102,7 @@ class Engine:
         import ctypes
         for thread in threads:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), 
-                                                           ctypes.py_object(SystemExit))
+                                                           ctypes.py_object(SystemExit)) # "Killing" the threads
     
     def disable_button(self, buttons : list[Button]):
         '''
