@@ -3,6 +3,7 @@ import os
 
 from datetime import datetime
 from tkinter import Tk
+from tkinter import Button
 from random import *
 import threading
 from config import *
@@ -75,16 +76,12 @@ class Engine:
         '''
         log_file = open('log.txt', 'a')
         date = datetime.now()
-        today = f'DATE FOR THE {date.year}-{date.month}-{date.day}'
         
         with open('log.txt', 'r') as file:
-            text = file.read()
-            data = self.read_data(text, r'DATA FOR THE \d+-\d+-\d+')
-            
-            if data[-1] == today:
-                log_file.write(string)
-            log_file.write(today + '\n' + string + '\n')
-            
+            text = file.read() # Reading the file
+            data = f'[{date.year}-{date.month}-{date.day}]'
+            log_file.write(data + '\n' + string + '\n')
+
             file.close()
         log_file.close()
     
@@ -94,14 +91,21 @@ class Engine:
         '''
         window.destroy()
     
-    def thread_destroy(self, threads):
+    def thread_destroy(self, threads : list[threading.Thread]):
         '''
         Closes all of the threads that were given to it as arguments
         '''
         import ctypes
         for thread in threads:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), 
-                                                           ctypes.py_object(SystemExit))
+                                                           ctypes.py_object(SystemExit)) # "Killing" the threads
+    
+    def disable_button(self, buttons : list[Button]):
+        '''
+        makes the buttons disabled
+        '''
+        for button in buttons:
+            button.config(state='disabled')
 
     def open_help_link(self):
         '''

@@ -1,5 +1,4 @@
 import tkinter.messagebox as mb
-import os
 
 from tkinter import *
 from config import *
