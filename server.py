@@ -25,8 +25,10 @@ class Server:
         '''
         Receives messages from clients and sends them to every client.
         '''
-        while True:
+        try:
             for addr, client_socket in clients.items():
+                if not addr:
+                    pass
                 ready_to_read, _, _ = select.select([client_socket], [], [], 0) # Chaecking if client has sent message
                 if ready_to_read:
                     data = client_socket.recv(1024) # Receiving message from the client
@@ -38,8 +40,11 @@ class Server:
                         return False
                     else:
                         for client in clients.values():
-                            client.send(data)
-                        return data
+                            if client != client_socket:
+                                client.send(data)
+                    return data
+        except:
+            pass
 
     def client_accepting(self):
         '''

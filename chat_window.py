@@ -24,32 +24,30 @@ class ChatWindow:
         self.eng = Engine()
         self.client = Client()
         self.main_server = None
-        self.close_button = None
         self.server_threads = None
         self.client_threads = None
+        self.admin_chat_window = None
 
     def print_message(self, message, chat_field : Text):
         '''
         Print messages into the chat field.
         '''
-        chat_field.insert(0.0, message)
+        chat_field.insert(index=0.0, chars=message)
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
     def close_conn(self, subject : socket.socket,
                    threads : list[threading.Thread] = None,
                    buttons : list[Button] = None,
-                   is_client : bool = False,
-                   chat : Text = None):
+                   is_client : bool = False):
         '''
         Closes the connection with the subject, close threads, disables buttons
         '''
-        if is_client: # FIXME - Bug here. Add method to the client, which is send message to client.
+        if is_client:
             subject.send(CLOSE_MESSAGE)
         
         mb.showinfo(title='Message',
                     message='Connection is closed!')
         subject.close()
-        
 
         if threads != None:
             self.eng.thread_destroy(threads)
@@ -66,6 +64,25 @@ class ChatWindow:
         
         mb.showinfo(title='Staus',
                     message='The connection is closed!')
+    
+    def broadcasting(self, chat_field : Text):
+        '''
+        Sends the message to every client and insert it into the admin chat field
+        '''
+        data = self.main_server.broadcast_message(
+                                self.main_server.clients)
+        try:
+            if int(data) == 0:
+                pass
+        
+        except:
+            pass
+
+        finally:
+            if data == None:
+                pass
+            else:
+                self.print_message(data, chat_field)
 
     def chat_window(self, ip, port):
         '''
@@ -134,7 +151,7 @@ class ChatWindow:
                     width=BUTTON_WIDTH,
                     height=BUTTON_HEIGHT,
                     text='Exit!',
-                    command=lambda: self.close_conn(self.client, self.client_threads, 
+                    command=lambda: self.close_conn(self.client.client_socket, self.client_threads, 
                                                     [send_button, close_button], True))
 
         widgets = {chat_label : (0, 3),
@@ -173,31 +190,29 @@ class ChatWindow:
                         height=LABEL_HEIGHT,
                         text='Chat window')
         
-        chat_field = Text(alt_window,
+        self.admin_chat_window = Text(alt_window,
                         width=LOG_CHAT_WIDTH,
                         height=LOG_CHAT_HEIGHT)
         
         scrollbar = Scrollbar(alt_window,
                             orient=VERTICAL,
-                            command=chat_field.yview)
+                            command=self.admin_chat_window.yview)
         
         close_button = Button(alt_window,
             height=BUTTON_HEIGHT,
             width=BUTTON_WIDTH,
             text='Close the Server',
-            command=lambda:
-            
-            self.close_conn(subject=self.main_server.server_socket,
+            command=lambda: self.close_conn(subject=self.main_server.server_socket,
                                             threads=self.server_threads,
                                             buttons = [close_button],
-                                            chat=chat_field)
+                                            chat=self.admin_chat_window)
                               )
         widgets = {chat_label : (0, 3),
-                   chat_field : (1, 3),
+       self.admin_chat_window : (1, 3),
                     scrollbar : (1, 4),
-                    close_button : (2, 3)}
+                 close_button : (2, 3)}
         
-        chat_field['yscrollcommand'] = scrollbar.set
+        self.admin_chat_window['yscrollcommand'] = scrollbar.set
         for widget, coords in widgets.items():
             row_pos, col = coords
             widget.grid(row=row_pos,
@@ -211,29 +226,18 @@ class ChatWindow:
             '''
             while True:
                 self.main_server.client_accepting()
-        
-        def broadcasting():
-            '''
-            Sends the message to every client and insert it into the admin chat field
-            '''
-            data = self.main_server.broadcast_message(
-                                    self.main_server.clients)
-            try:
-                if int(data) == 0:
-                    pass
-            except:
-                pass
-            self.print_message(data, chat_field)
 
+        def receiv():
+            while True:
+                self.broadcasting(self.admin_chat_window)
 
+        '''
         # The thread writes and sends messages
         writer = threading.Thread(target=broadcasting, name='Message Writer')
-
+        '''
         # This thread accepts the clients
         guard = threading.Thread(target=accepting, name="Servant of the People")
-
-        
-        self.server_threads = [writer, guard]
-
+        receiver = threading.Thread(target=receiv)
+        self.server_threads = [receiver, guard]
         guard.start()
-        writer.start()
+        receiver.start()

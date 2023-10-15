@@ -29,6 +29,9 @@ def host_window():
         if check_count == len(check_list):
             chat_windows = ChatWindow()
             chat_windows.admin_window(ip, port)
+            chat_status = True
+            if chat_status:
+                chat_windows.broadcasting(chat_windows.admin_chat_window)
 
     alt_window = Toplevel()
     alt_window.geometry(f'{HOST_WIDTH}x{HOST_HEIGHT}')
