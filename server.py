@@ -58,3 +58,9 @@ class Server:
             self.clients[addr] = client # Adding the client's address and socket to the dictionary
         except OSError:
             pass
+
+    def close(self):
+        '''
+        closes the server
+        '''
+        self.server_socket.close()

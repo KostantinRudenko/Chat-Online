@@ -35,33 +35,25 @@ class ChatWindow:
         chat_field.insert(index=0.0, chars=message)
         self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
-    def close_conn(self, subject : socket.socket,
+    def close_conn(self, subject : Server | Client,
                    threads : list[threading.Thread] = None,
-                   buttons : list[Button] = None,
-                   is_client : bool = False):
+                   buttons : list[Button] = None):
         '''
         Closes the connection with the subject, close threads, disables buttons
         '''
-        if is_client:
-            subject.send(CLOSE_MESSAGE)
-        
-        mb.showinfo(title='Message',
-                    message='Connection is closed!')
         subject.close()
 
         if threads != None:
             self.eng.thread_destroy(threads)
-            if not is_client:
-                del self.server_threads
-                del threads
-            else:
-                del self.client_threads
         
         if buttons != None:
             self.eng.disable_button(buttons)
 
+        del self.server_threads
+        del threads
+        del self.client_threads
         del subject
-        
+        del buttons        
         mb.showinfo(title='Staus',
                     message='The connection is closed!')
     
@@ -71,18 +63,10 @@ class ChatWindow:
         '''
         data = self.main_server.broadcast_message(
                                 self.main_server.clients)
-        try:
-            if int(data) == 0:
-                pass
-        
-        except:
+        if data == None or data == b'':
             pass
-
-        finally:
-            if data == None:
-                pass
-            else:
-                self.print_message(data, chat_field)
+        else:
+            self.print_message(data, chat_field)
 
     def chat_window(self, ip, port):
         '''
@@ -151,8 +135,8 @@ class ChatWindow:
                     width=BUTTON_WIDTH,
                     height=BUTTON_HEIGHT,
                     text='Exit!',
-                    command=lambda: self.close_conn(self.client.client_socket, self.client_threads, 
-                                                    [send_button, close_button], True))
+                    command=lambda: self.close_conn(self.client, self.client_threads, 
+                                                    [send_button, close_button]))
 
         widgets = {chat_label : (0, 3),
                 chat_field : (1, 3),
@@ -202,11 +186,10 @@ class ChatWindow:
             height=BUTTON_HEIGHT,
             width=BUTTON_WIDTH,
             text='Close the Server',
-            command=lambda: self.close_conn(subject=self.main_server.server_socket,
+            command=lambda: self.close_conn(subject=self.main_server,
                                             threads=self.server_threads,
-                                            buttons = [close_button],
-                                            chat=self.admin_chat_window)
-                              )
+                                            buttons = [close_button])
+                            )
         widgets = {chat_label : (0, 3),
        self.admin_chat_window : (1, 3),
                     scrollbar : (1, 4),

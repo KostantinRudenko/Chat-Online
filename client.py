@@ -28,3 +28,7 @@ class Client():
         This function sends messages to server
         '''
         self.client_socket.send(message.encode())
+
+    def close(self):
+        self.client_socket.send(CLOSE_MESSAGE)
+        self.client_socket.close()
