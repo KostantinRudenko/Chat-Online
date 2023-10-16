@@ -16,20 +16,20 @@ class Server:
         self.client_count = 0 # Count of the connected clients
         self.host = host
         self.port = port
-        self.clients = {} # Addresses and sockets of the clients
+        self.clients = {} # Adresses and sockets of the clients
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port)) 
         self.server_socket.listen(CLIENT_COUNT)
         
-    def broadcast_message(self, clients : dict) -> str | tuple:
+    def broadcast_message(self) -> str | tuple:
         '''
         Receives messages from clients and sends them to every client.
         '''
         try:
-            for addr, client_socket in clients.items():
+            for addr, client_socket in self.clients.items():
                 if not addr:
                     pass
-                ready_to_read, _, _ = select.select([client_socket], [], [], 0) # Chaecking if client has sent message
+                ready_to_read, _, _ = select.select([client_socket], [], [], 0) # Checking if client has sent message
                 if ready_to_read:
                     data = client_socket.recv(1024) # Receiving message from the client
                     if not data:
@@ -39,7 +39,7 @@ class Server:
                         self.client_count -= 1
                         return False
                     else:
-                        for client in clients.values():
+                        for client in self.clients.values():
                             if client != client_socket:
                                 client.send(data)
                     return data

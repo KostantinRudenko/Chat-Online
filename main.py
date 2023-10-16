@@ -90,6 +90,7 @@ def connect_window():
             
     alt_window = Toplevel()
     alt_window.geometry(f'{CONN_WIDTH}x{CONN_HEIGHT}')
+    alt_window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
 
     ip_label = Label(alt_window,
                     width=LABEL_WIDTH,
