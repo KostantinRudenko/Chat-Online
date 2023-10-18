@@ -14,6 +14,7 @@ PORT = 8080
 
 CLIENT_COUNT = 3
 CLOSE_MESSAGE = b'``` ghfjs t1e6t7*&*(I(! 18y3))`` ]["}f?><mekc/kawdoiUHAO@@_o4032]1=2-304i9=1-23'
+CLOSE_SERVER_MESSAGE = b"jes3728^**&@R<MU894WCU(Q_L\WD[;][0-oq+_=iq-``?<h;aompoz.zc,ji[5obeu1=i093]])"
 
 #UI options
 CHAT_WIDTH = 500

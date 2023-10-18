@@ -3,6 +3,7 @@ import select
 
 from config import *
 from exceptions import *
+from engine import Engine
 
 class Server:
     '''
@@ -13,10 +14,11 @@ class Server:
         '''
         Runs the server. Saves total info
         '''
+        self.eng = Engine()
         self.client_count = 0 # Count of the connected clients
         self.host = host
         self.port = port
-        self.clients = {} # Adresses and sockets of the clients
+        self.clients = {socket.socket : socket._RetAddress} # Adresses and sockets of the clients
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port)) 
         self.server_socket.listen(CLIENT_COUNT)
@@ -37,7 +39,7 @@ class Server:
                     elif data == CLOSE_MESSAGE:
                         self.clients.pop(addr) # Deleting the client
                         self.client_count -= 1
-                        return False
+                        data = f'[STATUS: SERVER MESSAGE] {self.eng.current_time()} {addr} has disconnected\n'
                     else:
                         for client in self.clients.values():
                             if client != client_socket:
@@ -63,4 +65,6 @@ class Server:
         '''
         closes the server
         '''
+        for client in self.clients.values():
+            client.send()
         self.server_socket.close()

@@ -79,8 +79,8 @@ class Engine:
         
         with open('log.txt', 'r') as file:
             text = file.read() # Reading the file
-            data = f'[{date.year}-{date.month}-{date.day}]'
-            log_file.write(data + '\n' + string + '\n')
+            date = f'[{date.year}-{date.month}-{date.day}]'
+            log_file.write(date + '\n' + string)
 
             file.close()
         log_file.close()

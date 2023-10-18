@@ -20,9 +20,14 @@ class Client():
         '''
         This function receives messages
         '''
-        data = self.client_socket.recv(1024).decode()
-        return data
-    
+        try:
+            data = self.client_socket.recv(1024).decode()
+            if data == CLOSE_SERVER_MESSAGE:
+                data = []
+            return data
+        except:
+            pass
+
     def send_message(self, message) -> None:
         '''
         This function sends messages to server

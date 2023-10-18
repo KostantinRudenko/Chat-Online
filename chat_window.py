@@ -28,12 +28,15 @@ class ChatWindow:
         self.client_threads = None
         self.admin_chat_window = None
 
-    def print_message(self, message, chat_field : Text):
+    def print_message(self, message : str, chat_field : Text):
         '''
         Print messages into the chat field.
         '''
-        chat_field.insert(index=0.0, chars=message)
-        self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
+        if message == None:
+            pass
+        else:
+            chat_field.insert(index='0.0', chars=message)
+            self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
     
     def close_conn(self, subject : Server | Client,
                    threads : list[threading.Thread] = None,
@@ -61,10 +64,10 @@ class ChatWindow:
         '''
         Sends the message to every client and insert it into the admin chat field
         '''
-        data = self.main_server.broadcast_message(
-                                self.main_server.clients)
-        if data == None or data == b'':
-            pass
+        data = self.main_server.broadcast_message()
+        for false_data in [None, b'', False]:
+            if data == false_data:
+                pass
         else:
             self.print_message(data, chat_field)
 
@@ -85,8 +88,8 @@ class ChatWindow:
             message = message_field.get(0.0, END)
             message_field.delete(0.0, END)
             
-            self.client.send_message(f'{self.eng.current_time()} {username} {message}' + '\n')
-            chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}' + '\n')
+            self.client.send_message(f'{self.eng.current_time()} {username} {message}\n')
+            chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}\n')
             
             self.eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
         
@@ -95,8 +98,11 @@ class ChatWindow:
             Receives messages from server and print them into the chat field
             '''
             data = self.client.receive_message()
-            self.print_message(data, chat_field)
-    
+            if data is list:
+                pass
+            else:
+                self.print_message(data, chat_field)
+
         alt_window = Toplevel()
         alt_window.geometry(f'{CLIENT_CHAT_WIDTH}x{CLIENT_CHAT_HEIGHT}')
         alt_window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
@@ -152,7 +158,11 @@ class ChatWindow:
             widget.grid(row=row_pos,
                         column=col)
         
-        postman = threading.Thread(target=receiving, args=chat_field)
+        def thread_receiving():
+            while True:
+                receiving(chat_field)
+
+        postman = threading.Thread(target=thread_receiving)
 
         self.client_threads = [postman]
 
