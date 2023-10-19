@@ -28,7 +28,7 @@ class ChatWindow:
         self.client_threads = None
         self.admin_chat_window = None
 
-    def print_message(self, message : str, chat_field : Text):
+    def print_message(self, message, chat_field : Text):
         '''
         Print messages into the chat field.
         '''
@@ -36,7 +36,7 @@ class ChatWindow:
             pass
         else:
             chat_field.insert(index='0.0', chars=message)
-            self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
+            self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message.decode()}')
     
     def close_conn(self, subject : Server | Client,
                    threads : list[threading.Thread] = None,
@@ -88,10 +88,9 @@ class ChatWindow:
             message = message_field.get(0.0, END)
             message_field.delete(0.0, END)
             
-            self.client.send_message(f'{self.eng.current_time()} {username} {message}\n')
-            chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}\n')
-            
-            self.eng.write_log(f'[STATUS: SEND MESSAGE] {message}')
+            self.client.send_message(f'{self.eng.current_time()} {username} {message}')
+            chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}')
+            self.eng.write_log(f'[STATUS: SEND MESSAGE] {self.eng.current_time()} {message}')
         
         def receiving(chat_field : Text):
             '''

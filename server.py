@@ -18,7 +18,7 @@ class Server:
         self.client_count = 0 # Count of the connected clients
         self.host = host
         self.port = port
-        self.clients = {socket.socket : socket._RetAddress} # Adresses and sockets of the clients
+        self.clients = {} # Adresses and sockets of the clients
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port)) 
         self.server_socket.listen(CLIENT_COUNT)
@@ -66,5 +66,5 @@ class Server:
         closes the server
         '''
         for client in self.clients.values():
-            client.send()
+            client.send(CLOSE_SERVER_MESSAGE)
         self.server_socket.close()

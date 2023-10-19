@@ -77,12 +77,9 @@ class Engine:
         log_file = open('log.txt', 'a')
         date = datetime.now()
         
-        with open('log.txt', 'r') as file:
-            text = file.read() # Reading the file
-            date = f'[{date.year}-{date.month}-{date.day}]'
-            log_file.write(date + '\n' + string)
+        date = f'[{date.year}-{date.month}-{date.day}]'
+        log_file.write(date + '\n' + string)
 
-            file.close()
         log_file.close()
     
     def window_destroy(window : Tk):
