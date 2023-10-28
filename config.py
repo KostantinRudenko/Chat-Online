@@ -7,8 +7,8 @@ STATUS_CODE = {100 : '100 : Wainting',
 
 #Server Datas
 
-HOST = '127.0.0.1'
-PORT = 8080
+is_host = 0
+is_socket = 0
 
 #Client Datas
 

@@ -5,6 +5,7 @@ import tkinter.messagebox as mb
 import threading
 from tkinter import *
 from config import *
+import config as cfg
 from engine import Engine
 
 class ChatWindow:
@@ -36,15 +37,21 @@ class ChatWindow:
             pass
         else:
             chat_field.insert(index='0.0', chars=message)
-            self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message.decode()}')
-    
-    def close_conn(self, subject : Server | Client,
+            self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
+
+    def close_conn(self, subject : 1 | 0,
                    threads : list[threading.Thread] = None,
                    buttons : list[Button] = None):
         '''
         Closes the connection with the subject, close threads, disables buttons
         '''
-        subject.close()
+        if subject == 1:
+            self.main_server.close()
+            cfg.is_host = 0
+
+        elif subject == 0:
+            self.client.close()
+            cfg.is_socket = 0
 
         if threads != None:
             self.eng.thread_destroy(threads)
@@ -140,7 +147,7 @@ class ChatWindow:
                     width=BUTTON_WIDTH,
                     height=BUTTON_HEIGHT,
                     text='Exit!',
-                    command=lambda: self.close_conn(self.client, self.client_threads, 
+                    command=lambda: self.close_conn(0, self.client_threads, 
                                                     [send_button, close_button]))
 
         widgets = {chat_label : (0, 3),
@@ -195,7 +202,7 @@ class ChatWindow:
             height=BUTTON_HEIGHT,
             width=BUTTON_WIDTH,
             text='Close the Server',
-            command=lambda: self.close_conn(subject=self.main_server,
+            command=lambda: self.close_conn(subject=1,
                                             threads=self.server_threads,
                                             buttons = [close_button])
                             )

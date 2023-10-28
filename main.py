@@ -2,6 +2,7 @@ import tkinter.messagebox as mb
 
 from tkinter import *
 from config import *
+import config as cfg
 from engine import Engine
 from chat_window import *
 
@@ -13,21 +14,21 @@ def host_window():
         '''
         Checking if server ip or server port are entered for creating the server
         '''
-        global ip, port, is_host
+        global ip, port
         eng = Engine()
-        is_host = True
         ip = ip_field.get(0.0, END).strip()
         port = port_field.get(0.0, END).strip()
-        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port)]
+        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port), eng.if_acw()]
         check_count = 0
         for check in check_list:
             if not check:
                 mb.showerror(title='Error!',
-                             message='Error. Something is wrong! Please, check your IP or port!')
+                             message='Error. Something is wrong! Please, check your IP, port or opened windows!')
                 break
             check_count += 1
         if check_count == len(check_list):
             chat_windows = ChatWindow()
+            cfg.is_host = 1
             chat_windows.admin_window(ip, port)
             chat_windows.broadcasting(chat_windows.admin_chat_window)
 
@@ -76,16 +77,17 @@ def connect_window():
         eng = Engine()
         client_ip = ip_field.get(0.0, END).strip()
         client_port = port_field.get(0.0, END).strip()
-        check_list = [eng.is_empty(client_ip), eng.is_ip(client_ip), eng.is_port(client_port)]
+        check_list = [eng.is_empty(client_ip), eng.is_ip(client_ip), eng.is_port(client_port), eng.if_ccw()]
         check_count = 0
         for check in check_list:
             if not check:
                 mb.showerror(title='Error!',
-                             message='Error. Something is wrong! Please, check your IP or port!')
+                             message='Error. Something is wrong! Please, check your IP, port or opened windows!')
                 break
             check_count += 1
         if check_count == len(check_list):
             chat_windows = ChatWindow()
+            cfg.is_socket = 1
             chat_windows.chat_window(client_ip, client_port)
             
     alt_window = Toplevel()
