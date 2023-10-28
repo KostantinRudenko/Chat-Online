@@ -40,7 +40,7 @@ class Server:
                     elif data == CLOSE_MESSAGE:
                         self.clients.pop(addr) # Deleting the client
                         self.client_count -= 1
-                        data = f'[STATUS: SERVER MESSAGE] {self.eng.current_time()} {addr} has disconnected\n'
+                        data = f'[STATUS: SERVER MESSAGE] {self.eng.current_time()} {addr} has disconnected\n'.encode()
                         for client in self.clients.values():
                             client.send(data.encode())
                     
@@ -48,7 +48,7 @@ class Server:
                         for client in self.clients.values():
                             if client != client_socket:
                                 client.send(data)
-                    return data
+                    return data.decode()
         except:
             pass
 

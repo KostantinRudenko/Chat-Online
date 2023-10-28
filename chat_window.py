@@ -37,7 +37,10 @@ class ChatWindow:
             pass
         else:
             chat_field.insert(index='0.0', chars=message)
-            self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}')
+            try:
+                self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message.decode()}\n')
+            except:
+                self.eng.write_log(f'[STATUS: RECEIVED MESSAGE] {message}\n')
 
     def close_conn(self, subject : 1 | 0,
                    threads : list[threading.Thread] = None,
@@ -72,7 +75,7 @@ class ChatWindow:
         Sends the message to every client and insert it into the admin chat field
         '''
         data = self.main_server.broadcast_message()
-        for false_data in [None, b'', False]:
+        for false_data in [None, '']:
             if data == false_data:
                 pass
         else:
@@ -105,7 +108,9 @@ class ChatWindow:
             '''
             data = self.client.receive_message()
             if data is list:
-                pass
+                self.close_conn(subject=0,
+                                threads=self.client_threads,
+                                buttons=[send_button, close_button])
             else:
                 self.print_message(data, chat_field)
 
