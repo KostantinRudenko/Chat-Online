@@ -5,7 +5,6 @@ import tkinter.messagebox as mb
 import threading
 from tkinter import *
 from config import *
-import config as cfg
 from engine import Engine
 
 class ChatWindow:
@@ -50,11 +49,11 @@ class ChatWindow:
         '''
         if subject == 1:
             self.main_server.close()
-            cfg.is_host = 0
+            IS_HOST = False
 
         elif subject == 0:
             self.client.close()
-            cfg.is_socket = 0
+            IS_SOCKET = False
 
         if threads != None:
             self.eng.thread_destroy(threads)
