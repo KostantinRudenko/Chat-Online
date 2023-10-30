@@ -97,10 +97,13 @@ class ChatWindow:
             '''
             message = message_field.get(0.0, END)
             message_field.delete(0.0, END)
-            
-            self.client.send_message(f'{self.eng.current_time()} {username} {message}')
-            chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}')
-            self.eng.write_log(f'[STATUS: SEND MESSAGE] {self.eng.current_time()} {message}')
+
+            if message == '\n':
+                pass
+            else:
+                self.client.send_message(f'{self.eng.current_time()} {username} {message}')
+                chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}')
+                self.eng.write_log(f'[STATUS: SEND MESSAGE] {self.eng.current_time()} {message}')
         
         def receiving(chat_field : Text):
             '''
@@ -111,6 +114,8 @@ class ChatWindow:
                 self.close_conn(subject=0,
                                 threads=self.client_threads,
                                 buttons=[send_button, close_button])
+            elif data == '\n':
+                pass
             else:
                 self.print_message(data, chat_field)
 

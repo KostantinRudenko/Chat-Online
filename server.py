@@ -23,7 +23,7 @@ class Server:
         self.server_socket.bind((self.host, self.port)) 
         self.server_socket.listen(CLIENT_COUNT)
         
-    def broadcast_message(self) -> str | tuple:
+    def broadcast_message(self) -> str:
         '''
         Receives messages from clients and sends them to every client.
         '''
@@ -48,7 +48,12 @@ class Server:
                         for client in self.clients.values():
                             if client != client_socket:
                                 client.send(data)
-                    return data.decode()
+                    try:
+                        data.decode()
+                    except:
+                        pass
+                    
+                    return data
         except:
             pass
 
@@ -69,6 +74,9 @@ class Server:
         '''
         closes the server
         '''
-        for client in self.clients.values():
-            client.send(CLOSE_SERVER_MESSAGE)
+        try:
+            for client in self.clients.values():
+                client.send(CLOSE_SERVER_MESSAGE)
+        except:
+            pass
         self.server_socket.close()
