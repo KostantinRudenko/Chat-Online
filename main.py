@@ -2,7 +2,6 @@ import tkinter.messagebox as mb
 
 from tkinter import *
 from config import *
-import config as cfg
 from engine import Engine
 from chat_window import *
 
@@ -18,7 +17,7 @@ def host_window():
         eng = Engine()
         ip = ip_field.get(0.0, END).strip()
         port = port_field.get(0.0, END).strip()
-        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port), eng.if_acw()]
+        check_list = [eng.is_empty(ip), eng.is_ip(ip), eng.is_port(port), eng.is_acw()]
         check_count = 0
         for check in check_list:
             if not check:
@@ -28,7 +27,7 @@ def host_window():
             check_count += 1
         if check_count == len(check_list):
             chat_windows = ChatWindow()
-            cfg.is_host = 1
+            IS_HOST = True
             chat_windows.admin_window(ip, port)
             chat_windows.broadcasting(chat_windows.admin_chat_window)
 
@@ -77,7 +76,7 @@ def connect_window():
         eng = Engine()
         client_ip = ip_field.get(0.0, END).strip()
         client_port = port_field.get(0.0, END).strip()
-        check_list = [eng.is_empty(client_ip), eng.is_ip(client_ip), eng.is_port(client_port), eng.if_ccw()]
+        check_list = [eng.is_empty(client_ip), eng.is_ip(client_ip), eng.is_port(client_port), eng.is_ccw()]
         check_count = 0
         for check in check_list:
             if not check:
@@ -87,7 +86,7 @@ def connect_window():
             check_count += 1
         if check_count == len(check_list):
             chat_windows = ChatWindow()
-            cfg.is_socket = 1
+            IS_SOCKET = True
             chat_windows.chat_window(client_ip, client_port)
             
     alt_window = Toplevel()

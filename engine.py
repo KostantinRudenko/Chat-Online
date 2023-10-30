@@ -7,7 +7,7 @@ from tkinter import Button
 from random import *
 import threading
 from config import *
-import config as cfg
+
 
 class Engine:
     def __init__(self) -> None:
@@ -64,25 +64,25 @@ class Engine:
                 count += 1
         return count == 4
     
-    def if_acw(self) -> bool:
+    def is_acw(self) -> bool:
         '''
         Check if Admin Chat Window(ACW) exists
         Returns a bool(True\False)
         True - ACW does not exist
         False - ACW exists
         '''
-        if bool(cfg.is_host):
+        if IS_HOST:
             return False
         return True
 
-    def if_ccw(self) -> bool:
+    def is_ccw(self) -> bool:
         '''
         Check if Client Chat Window(CCW) exists
         Returns a bool(True\False)
         True - CCW does not exist
         False - CCW exists
         '''
-        if bool(cfg.is_socket):
+        if IS_SOCKET:
             return False
         return True
 
@@ -98,7 +98,9 @@ class Engine:
         '''
         sends all data to the log file
         '''
-        log_file = open('log.txt', 'a')
+        log_file = open(file='log.txt', 
+                        mode='a',
+                        encoding='ANSI-16')
         date = datetime.now()
         
         date = f'[{date.year}-{date.month}-{date.day}]'
@@ -136,3 +138,5 @@ class Engine:
             os.system(WEBBROWSER_PROMPT)
         except:
             os.system(EDGE_PROMPT)
+
+    

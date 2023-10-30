@@ -7,8 +7,8 @@ STATUS_CODE = {100 : '100 : Wainting',
 
 #Server Datas
 
-is_host = 0
-is_socket = 0
+IS_HOST = False
+IS_SOCKET = False
 
 #Client Datas
 
