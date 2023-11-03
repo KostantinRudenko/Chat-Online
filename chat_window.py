@@ -55,17 +55,14 @@ class ChatWindow:
             self.client.close()
             IS_SOCKET = False
 
-        if threads != None:
-            self.eng.thread_destroy(threads)
-        
-        if buttons != None:
-            self.eng.disable_button(buttons)
+        self.eng.disable_button(buttons)
+        self.eng.thread_destroy(threads)
 
         del self.server_threads
         del threads
         del self.client_threads
         del subject
-        del buttons        
+        del buttons
         mb.showinfo(title='Staus',
                     message='The connection is closed!')
     
@@ -104,20 +101,24 @@ class ChatWindow:
                 chat_field.insert(0.0, f'{self.eng.current_time()} {username} {message}')
                 self.eng.write_log(f'[STATUS: SEND MESSAGE] {self.eng.current_time()} {message}')
         
-        def receiving(chat_field : Text):
+        def receiving(chat_field : Text) -> str:
             '''
             Receives messages from server and print them into the chat field
             '''
-            data = self.client.receive_message()
-            if data is list:
-                self.close_conn(subject=0,
-                                threads=self.client_threads,
-                                buttons=[send_button, close_button])
-            elif data == '\n':
-                pass
-            else:
-                self.print_message(data, chat_field)
-
+            while True:
+                data = self.client.receive_message()
+                try:
+                    if len(data) == 0 or data is list:
+                        break
+                    elif data == '\n':
+                        pass
+                    else:
+                        self.print_message(data, chat_field)
+                except:
+                    pass
+            self.close_conn(subject=0,
+                            threads=self.client_threads,
+                            buttons=[send_button, close_button])
         alt_window = Toplevel()
         alt_window.geometry(f'{CLIENT_CHAT_WIDTH}x{CLIENT_CHAT_HEIGHT}')
         alt_window.resizable(NOT_RESIZABLE_WIDTH, NOT_RESIZABLE_HEIGHT)
@@ -174,8 +175,7 @@ class ChatWindow:
                         column=col)
         
         def thread_receiving():
-            while True:
-                receiving(chat_field)
+            receiving(chat_field)
 
         postman = threading.Thread(target=thread_receiving)
 

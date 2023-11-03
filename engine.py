@@ -100,7 +100,7 @@ class Engine:
         '''
         log_file = open(file='log.txt', 
                         mode='a',
-                        encoding='ANSI-16')
+                        encoding='UTF-16')
         date = datetime.now()
         
         date = f'[{date.year}-{date.month}-{date.day}]'
